@@ -1,10 +1,10 @@
-=== wpFortify for WooCommerce ===
+﻿=== wpFortify for WooCommerce ===
 Contributors: rossdev
 Tags: stripe, payment, payments, credit cards, online payment, woo, woocommerce
 Donate link: https://wpfortify.com
 Requires at least: 3.9
 Tested up to: 3.9.1
-Stable tag: 0.1.0
+Stable tag: 0.1.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -77,8 +77,11 @@ Sorry we currently don't support WooCommerce subscriptions, but it's on the shor
 3. wpFortify default checkout page
 
 == Changelog ==
+= 0.1.1 =
+* fixed php warning in admin.
+
 = 0.1.0 =
 * Initial release.
 
 == Upgrade Notice ==
-Initial release
+Small update to fix an php warning in the WooCommerce settings screen.
