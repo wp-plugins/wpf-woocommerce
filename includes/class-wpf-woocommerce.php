@@ -41,7 +41,6 @@ class WPF_WC extends WC_Payment_Gateway {
 		$this->order_button_text = __( 'Enter payment details', 'wpf-woocommerce' );
 
 		// Hooks
-		add_action( 'admin_notices', array( $this, 'admin_notices' ) );
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'woocommerce_api_wpf_wc', array( $this, 'wpf_listen' ) );
 	}
