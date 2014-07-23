@@ -29,16 +29,20 @@ class WPF_WC extends WC_Payment_Gateway {
 		$this->init_settings();
 
 		// Get setting values
-		$this->title             = $this->get_option( 'title' );
-		$this->description       = $this->get_option( 'description' ); $this->settings['description'];
-		$this->enabled           = $this->get_option( 'enabled' ); $this->settings['enabled'];
-		$this->testmode          = $this->get_option( 'testmode' ) === "yes" ? true : false;
-		$this->capture           = $this->get_option( 'capture' ) === "yes" ? true : false;
-		$this->checkout_image    = $this->get_option( 'checkout_image' );
-		$this->secret_key        = $this->get_option( 'secret_key' );
-		$this->public_key        = $this->get_option( 'public_key' );
-		$this->custom_checkout   = $this->get_option( 'custom_checkout' );
-		$this->order_button_text = __( 'Enter payment details', 'wpf-woocommerce' );
+		$this->title               = $this->get_option( 'title' );
+		$this->description         = $this->get_option( 'description' ); $this->settings['description'];
+		$this->enabled             = $this->get_option( 'enabled' ); $this->settings['enabled'];
+		$this->testmode            = $this->get_option( 'testmode' ) === "yes" ? true : false;
+		$this->capture             = $this->get_option( 'capture' ) === "yes" ? true : false;
+		$this->secret_key          = $this->get_option( 'secret_key' );
+		$this->public_key          = $this->get_option( 'public_key' );
+		$this->custom_checkout     = $this->get_option( 'custom_checkout' );
+		$this->checkout_image      = $this->get_option( 'checkout_image' );
+		$this->custom_title        = $this->get_option( 'custom_title' );
+		$this->custom_description  = $this->get_option( 'custom_description' );
+		$this->custom_save_card    = $this->get_option( 'custom_save_card' );
+		$this->custom_button       = $this->get_option( 'custom_button' );
+		$this->order_button_text   = __( 'Enter payment details', 'wpf-woocommerce' );
 
 		// Hooks
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
@@ -142,6 +146,30 @@ class WPF_WC extends WC_Payment_Gateway {
 				'description' => __( 'Optional: Enter the URL to the secure image from your wpFortify account. Example: <code>https://wpfortify.com/media/example.png</code>', 'wpf-woocommerce' ),
 				'type'        => 'text',
 				'default'     => ''
+			),
+			'custom_title' => array(
+				'title'       => __( 'Checkout Title', 'wpf-woocommerce' ),
+				'description' => __( 'Optional: Enter a new title. Default is "', 'wpf-woocommerce' ) . get_bloginfo() . '".' ,
+				'type'        => 'text',
+				'default'     => ''
+			),
+			'custom_description' => array(
+				'title'       => __( 'Checkout Description', 'wpf-woocommerce' ),
+				'description' => __( 'Optional: Enter a new description. Default is "Order #123 ($456)". Available filters: <code>{{order_id}} {{order_amount}}</code>. Example: <code>Order #{{order_id}} (${{order_amount}}</code>', 'wpf-woocommerce' ),
+				'type'        => 'text',
+				'default'     => ''
+			),
+			'custom_save_card' => array(
+				'title'       => __( 'Checkout Save Card', 'wpf-woocommerce' ),
+				'description' => __( 'Optional: Enter new save card text. Default is "Save this card for future purchases".', 'wpf-woocommerce' ),
+				'type'        => 'text',
+				'default'     => ''
+			),
+			'custom_button' => array(
+				'title'       => __( 'Checkout Button', 'wpf-woocommerce' ),
+				'description' => __( 'Optional: Enter new button text. Default is "Pay with Card". Available filters: <code>{{order_id}} {{order_amount}}</code>. Example: <code>Pay with Card (${{order_amount}}</code>', 'wpf-woocommerce' ),
+				'type'        => 'text',
+				'default'     => ''
 			)
 		) );
     }
@@ -198,10 +226,28 @@ class WPF_WC extends WC_Payment_Gateway {
 			if ( isset( $card_ids[ $_POST['wpfortify_card'] ]['card_id'] ) ) {
 				$card_id = $card_ids[ $_POST['wpfortify_card'] ]['card_id'];
 			} else {
-				WC()->add_error( __( 'Invalid card.', 'woocommerce-gateway-stripe' ) );
+				WC()->add_error( __( 'Invalid card.', 'wpf-woocommerce' ) );
 				return;
 			}
 
+		}
+
+		$title       = get_bloginfo();
+		$description = sprintf( '%s %s ($%s)', __( 'Order #', 'wpf-woocommerce' ), $order_id, $order->order_total );
+		$save_card   = __( 'Save this card for future purchases', 'wpf-woocommercee' );
+		$button      = __( 'Pay with Card', 'wpf-woocommerce' );
+
+		if ( $this->custom_title ) {
+			$title = $this->custom_title;
+		}
+		if ( $this->custom_description ) {
+			$description = str_replace( array( '{{order_id}}', '{{order_amount}}' ), array( $order_id, $order->order_total ), $this->custom_description );
+		}
+		if ( $this->custom_save_card ) {
+			$save_card = $this->custom_save_card;
+		}
+		if ( $this->custom_button ) {
+			$button = str_replace( array( '{{order_id}}', '{{order_amount}}' ), array( $order_id, $order->order_total ), $this->custom_button );
 		}
 
 		// Data for wpFortify
@@ -209,7 +255,7 @@ class WPF_WC extends WC_Payment_Gateway {
 			'wpf_charge' => array(
 				'plugin'       => 'wpf-woocommerce',
 				'action'       => 'charge_card',
-				'site_title'   => get_bloginfo(),
+				'site_title'   => $title,
 				'site_url'     => site_url(),
 				'listen_url'   => site_url( '/wc-api/wpf_wc/' ),
 				'return_url'   => $this->get_return_url( $order ),
@@ -219,7 +265,9 @@ class WPF_WC extends WC_Payment_Gateway {
 				'card_id'      => $card_id,
 				'email'        => $order->billing_email,
 				'amount'       => $order->order_total,
-				'description'  => sprintf( 'Order #%s', $order_id ),
+				'description'  => $description,
+				'save_card'    => $save_card,
+				'button'       => $button,
 				'currency'     => strtolower( get_woocommerce_currency() ),
 				'testmode'     => $this->testmode,
 				'capture'      => $this->capture,
@@ -246,7 +294,7 @@ class WPF_WC extends WC_Payment_Gateway {
 					'redirect' => $this->get_return_url( $order )
 				);
 			} else {
-				WC()->add_error( __( 'There was a problem updating the order.', 'woocommerce-gateway-stripe' ) );
+				WC()->add_error( __( 'There was a problem updating the order.', 'wpf-woocommerce' ) );
 				return;
 			}
 
@@ -284,11 +332,11 @@ class WPF_WC extends WC_Payment_Gateway {
 		$wpf_api = wp_remote_post( sprintf( 'https://api.wpfortify.com/%s/%s/', $endpoint, $this->public_key ), array( 'body' => $this->wpf_mask( $array ) ) );
 
 		if ( is_wp_error( $wpf_api ) ) {
-			return new WP_Error( 'wpfortify_error', __( 'There was a problem connecting to the payment gateway, please try again.', 'woocommerce-gateway-stripe' ) );
+			return new WP_Error( 'wpfortify_error', __( 'There was a problem connecting to the payment gateway, please try again.', 'wpf-woocommerce' ) );
 		}
 
 		if ( empty( $wpf_api['body'] ) ) {
-			return new WP_Error( 'wpfortify_error', __( 'Empty response.', 'woocommerce-gateway-stripe' ) );
+			return new WP_Error( 'wpfortify_error', __( 'Empty response.', 'wpf-woocommerce' ) );
 		}
 
 		$response = $this->wpf_unmask( $wpf_api['body'] );
@@ -296,7 +344,7 @@ class WPF_WC extends WC_Payment_Gateway {
 		if ( ! empty( $response->error ) ) {
 			return new WP_Error( 'wpfortify_error', $response->error );
 		} elseif ( empty( $response ) ) {
-			return new WP_Error( 'wpfortify_error', __( 'Invalid response.', 'woocommerce-gateway-stripe' ) );
+			return new WP_Error( 'wpfortify_error', __( 'Invalid response.', 'wpf-woocommerce' ) );
 		} else {
 			return $response;
 		}
@@ -331,11 +379,11 @@ class WPF_WC extends WC_Payment_Gateway {
 
 		if ( $response->captured ) {
 			update_post_meta( $order->id, '_wpf_woocommerce_charge_captured', 'yes' );
-			$order->add_order_note( sprintf( __( 'wpFortify (Stripe) charge complete. Charge ID: %s', 'woocommerce-gateway-stripe' ), $response->id ) );
+			$order->add_order_note( sprintf( __( 'wpFortify (Stripe) charge complete. Charge ID: %s', 'wpf-woocommerce' ), $response->id ) );
 			$order->payment_complete();
 		} else {
 			update_post_meta( $order->id, '_wpf_woocommerce_charge_captured', 'no' );
-			$order->update_status( 'on-hold', sprintf( __( 'wpFortify (Stripe) charge authorized. Charge ID: %s. Process order to take payment, or cancel to remove the pre-authorization.', 'woocommerce-gateway-stripe' ), $response->id ) );
+			$order->update_status( 'on-hold', sprintf( __( 'wpFortify (Stripe) charge authorized. Charge ID: %s. Process order to take payment, or cancel to remove the pre-authorization.', 'wpf-woocommerce' ), $response->id ) );
 			$order->reduce_order_stock();
 		}
 	}
@@ -371,11 +419,13 @@ class WPF_WC extends WC_Payment_Gateway {
 	 */
 	function wpf_unmask( $data ) {
 		list( $iv, $data_decoded ) = array_map( 'base64_decode', explode( '-', base64_decode( $data ), 2 ) );
-		$unmask = rtrim( mcrypt_decrypt( MCRYPT_RIJNDAEL_128, md5( $this->secret_key ), $data_decoded, MCRYPT_MODE_CBC, $iv ), "\0\4" );
-		$hash = substr( $unmask, -32 );
-		$unmask = substr( $unmask, 0, -32 );
-		if ( md5( $unmask ) == $hash ) {
-			return json_decode( $unmask );
+		if ( $iv && $data_decoded ) {
+			$unmask = rtrim( mcrypt_decrypt( MCRYPT_RIJNDAEL_128, md5( $this->secret_key ), $data_decoded, MCRYPT_MODE_CBC, $iv ), "\0\4" );
+			$hash = substr( $unmask, -32 );
+			$unmask = substr( $unmask, 0, -32 );
+			if ( md5( $unmask ) == $hash ) {
+				return json_decode( $unmask );
+			}
 		}
 	}
 }

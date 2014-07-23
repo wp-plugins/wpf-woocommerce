@@ -4,7 +4,7 @@ Tags: stripe, payment, payments, credit cards, online payment, woo, woocommerce
 Donate link: https://wpfortify.com
 Requires at least: 3.9
 Tested up to: 3.9.1
-Stable tag: 0.1.1
+Stable tag: 0.2.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -77,11 +77,22 @@ Sorry we currently don't support WooCommerce subscriptions, but it's on the shor
 3. wpFortify default checkout page
 
 == Changelog ==
+
+= 0.2.0 =
+* Feature: Added new custom checkout text for title.
+* Feature: Added new custom checkout text for description.
+* Feature: Added new custom checkout text for save card.
+* Feature: Added new custom checkout text for payment button.
+* Fix: $iv warning in unmask function.
+* Fix: corrected identifiers for translate strings.
+
 = 0.1.1 =
-* fixed php warning in admin.
+* Fix: php warning in admin.
 
 = 0.1.0 =
 * Initial release.
 
 == Upgrade Notice ==
-Small update to fix an php warning in the WooCommerce settings screen.
+
+= 0.2.0 =
+The method for displaying text on the checkout screen has changed. After update please review the checkout settings.
