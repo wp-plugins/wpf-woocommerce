@@ -167,7 +167,7 @@ class WPF_WC extends WC_Payment_Gateway {
 			),
 			'custom_button' => array(
 				'title'       => __( 'Checkout Button', 'wpf-woocommerce' ),
-				'description' => __( 'Optional: Enter new button text. Default is "Pay with Card". Available filters: <code>{{order_id}} {{order_amount}}</code>. Example: <code>Pay with Card (${{order_amount}}</code>', 'wpf-woocommerce' ),
+				'description' => __( 'Optional: Enter new button text. Default is "Pay with Card". Available filters: <code>{{order_id}} {{order_amount}}</code>. Example: <code>Pay with Card (${{order_amount}})</code>', 'wpf-woocommerce' ),
 				'type'        => 'text',
 				'default'     => ''
 			)
