@@ -163,7 +163,7 @@ class WPF_WC extends WC_Payment_Gateway {
 			),
 			'custom_description' => array(
 				'title'       => __( 'Checkout Description', 'wpf-woocommerce' ),
-				'description' => __( 'Optional: Enter a new description. Default is "Order #123 ($456)". Available filters: <code>{{order_id}} {{order_amount}}</code>. Example: <code>Order #{{order_id}} (${{order_amount}}</code>', 'wpf-woocommerce' ),
+				'description' => __( 'Optional: Enter a new description. Default is "Order #123 ($456)". Available filters: <code>{{order_id}} {{order_amount}}</code>. Example: <code>Order #{{order_id}} (${{order_amount}})</code>', 'wpf-woocommerce' ),
 				'type'        => 'text',
 				'default'     => ''
 			),
