@@ -268,7 +268,7 @@ class WPF_WC extends WC_Payment_Gateway {
 				'listen_url'      => site_url( '/wc-api/wpf_wc/' ),
 				'return_url'      => $this->get_return_url( $order ),
 				'cancel_url'      => get_permalink( get_option( 'woocommerce_checkout_page_id' ) ),
-                'custom_checkout' => $this->custom_checkout,
+				'custom_checkout' => $this->custom_checkout,
 				'image_url'       => $this->checkout_image,
 				'customer_id'     => $customer_id,
 				'card_id'         => $card_id,
