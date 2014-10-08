@@ -61,7 +61,12 @@ class WPF_WC extends WC_Payment_Gateway {
 				<p class="main"><strong><?php echo $this->method_description; ?></strong></p>
 				<p><a href="https://connect.wpfortify.com/" target="_blank" class="button button-primary"><?php _e( 'Connect now for free', 'wpf-woocommerce' ); ?></a> <a href="https://wpfortify.com/welcome/" target="_blank" class="button"><?php _e( 'Sign In', 'wpf-woocommerce' ); ?></a></p>
 			</div>
-		<?php else : ?>
+        <?php elseif ( ! get_option('permalink_structure') ) : ?>
+                <div class="error">
+                    <p class="main"><strong><?php _e( 'Sorry, wpFortify requires "Pretty Permalinks"', 'wpf-woocommerce' ); ?> (<a href="http://codex.wordpress.org/Introduction_to_Blogging#Pretty_Permalinks" target="_blank"><?php _e( 'learn more', 'wpf-woocommerce' ); ?></a>).</p>
+                    <p><a href="options-permalink.php" class="button button-primary"><?php _e( 'Enable permalinks now', 'wpf-woocommerce' ); ?></a></p>
+                </div>
+            <?php else : ?>
 			<p><?php echo $this->method_description; ?></p>
 		<?php endif; ?>
 
@@ -80,6 +85,9 @@ class WPF_WC extends WC_Payment_Gateway {
 			if ( ! $this->secret_key || ! $this->public_key ) {
 				return false;
 			}
+            if ( ! get_option('permalink_structure') ) {
+                return false;
+            }
 			return true;
 		}
 		return false;
@@ -253,27 +261,28 @@ class WPF_WC extends WC_Payment_Gateway {
 		// Data for wpFortify
 		$wpf_charge = array (
 			'wpf_charge' => array(
-				'plugin'       => 'wpf-woocommerce',
-				'action'       => 'charge_card',
-				'site_title'   => $title,
-				'site_url'     => site_url(),
-				'listen_url'   => site_url( '/wc-api/wpf_wc/' ),
-				'return_url'   => $this->get_return_url( $order ),
-				'cancel_url'   => get_permalink( get_option( 'woocommerce_checkout_page_id' ) ),
-				'image_url'    => $this->checkout_image,
-				'customer_id'  => $customer_id,
-				'card_id'      => $card_id,
-				'email'        => $order->billing_email,
-				'amount'       => $order->order_total,
-				'description'  => $description,
-				'save_card'    => $save_card,
-				'button'       => $button,
-				'currency'     => strtolower( get_woocommerce_currency() ),
-				'testmode'     => $this->testmode,
-				'capture'      => $this->capture,
-				'metadata'     => array(
-					'order_id' => $order_id,
-					'user_id'  => $order->user_id
+				'plugin'          => 'wpf-woocommerce',
+				'action'          => 'charge_card',
+				'site_title'      => $title,
+				'site_url'        => site_url(),
+				'listen_url'      => site_url( '/wc-api/wpf_wc/' ),
+				'return_url'      => $this->get_return_url( $order ),
+				'cancel_url'      => get_permalink( get_option( 'woocommerce_checkout_page_id' ) ),
+                'custom_checkout' => $this->custom_checkout,
+				'image_url'       => $this->checkout_image,
+				'customer_id'     => $customer_id,
+				'card_id'         => $card_id,
+				'email'           => $order->billing_email,
+				'amount'          => $order->order_total,
+				'description'     => $description,
+				'save_card'       => $save_card,
+				'button'          => $button,
+				'currency'        => strtolower( get_woocommerce_currency() ),
+				'testmode'        => $this->testmode,
+				'capture'         => $this->capture,
+				'metadata'        => array(
+					'order_id'    => $order_id,
+					'user_id'     => $order->user_id
 				)
 			)
 		);

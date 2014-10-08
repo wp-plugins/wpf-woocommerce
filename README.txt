@@ -3,10 +3,10 @@ Contributors: rossdev
 Tags: stripe, payment, payments, credit cards, online payment, woo, woocommerce
 Donate link: https://wpfortify.com
 Requires at least: 3.9
-Tested up to: 3.9.1
-Stable tag: 0.2.0
-License: GPLv3
-License URI: http://www.gnu.org/licenses/gpl-3.0.html
+Tested up to: 4.0
+Stable tag: 0.2.1
+License: GPLv2+
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Start accepting payments now with Stripe! Fast, easy and secure with hosted SSL checkout pages.
 
@@ -78,6 +78,10 @@ Sorry we currently don't support WooCommerce subscriptions, but it's on the shor
 
 == Changelog ==
 
+= 0.2.1 =
+* Feature: Added permalink nag
+* Changed to GPLv2+.
+
 = 0.2.0 =
 * Feature: Added new custom checkout text for title.
 * Feature: Added new custom checkout text for description.
@@ -94,5 +98,4 @@ Sorry we currently don't support WooCommerce subscriptions, but it's on the shor
 
 == Upgrade Notice ==
 
-= 0.2.0 =
-The method for displaying text on the checkout screen has changed. After update please review the checkout settings.
+= 0.2.1 =
