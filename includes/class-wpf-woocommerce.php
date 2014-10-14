@@ -311,6 +311,9 @@ class WPF_WC extends WC_Payment_Gateway {
 			if ( $response ) {
 				$this->wpf_update_order( $response );
 				// Return thank you page redirect
+				if ( $this->testmode ){
+					$order->add_order_note( __( 'IN TEST MODE', 'wpf-woocommerce' ) );
+				}
 				return array(
 					'result'   => 'success',
 					'redirect' => $this->get_return_url( $order )

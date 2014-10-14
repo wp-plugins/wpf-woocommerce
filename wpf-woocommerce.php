@@ -154,9 +154,6 @@ class WPF_WC_Gateway {
 				if ( is_wp_error( $result ) ) {
 					$order->add_order_note( __( 'Unable to capture charge!', 'wpf-woocommerce' ) . ' ' . $result->get_error_message() );
 				} else {
-					if ( $wpfortify->testmode ){
-						$order->add_order_note( __( 'IN TEST MODE', 'wpf-woocommerce' ) );
-					}
 					$order->add_order_note( sprintf( __( 'wpFortify (Stripe) charge captured. Charge ID: %s', 'wpf-woocommerce' ), $result->id ) );
 					update_post_meta( $order->id, '_wpf_woocommerce_charge_captured', 'yes' );
 				}
