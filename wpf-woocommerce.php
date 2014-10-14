@@ -85,7 +85,11 @@ class WPF_WC_Gateway {
 			return;
 		}
 
-		$credit_cards = get_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details', false );
+		if ( $_POST['testmode'] ) {
+			$credit_cards = get_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details_test', false );
+		}else{
+			$credit_cards = get_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details_live', false );
+		}
 
 		if ( ! $credit_cards ) {
 			return;
@@ -95,7 +99,12 @@ class WPF_WC_Gateway {
 			wp_die( __( 'Unable to verify deletion, please try again', 'wpf-woocommerce' ) );
 		}
 
-		delete_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details', $credit_cards[ absint( $_POST['wpf_woocommerce_delete_card'] ) ] );
+		if ( $_POST['testmode'] ) {
+			delete_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details_test', $credit_cards[ absint( $_POST['wpf_woocommerce_delete_card'] ) ] );
+		}else{
+			delete_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details_live', $credit_cards[ absint( $_POST['wpf_woocommerce_delete_card'] ) ] );
+		}
+
 		wc_add_notice( __( 'Card deleted.', 'wpf-woocommerce' ), 'success' );
 		wp_safe_redirect( get_permalink( woocommerce_get_page_id( 'myaccount' ) ) );
 		exit;
@@ -105,13 +114,18 @@ class WPF_WC_Gateway {
 	 * Display saved cards
 	 */
 	public function saved_cards() {
-		$credit_cards = get_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details', false );
+		$wpfortify = new WPF_WC();
+		if ( $wpfortify->testmode ) {
+			$credit_cards = get_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details_test', false );
+		}else{
+			$credit_cards = get_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details_live', false );
+		}
 
 		if ( ! $credit_cards ) {
 			return;
 		}
 
-		woocommerce_get_template( 'saved-cards.php', array( 'credit_cards' => $credit_cards ), 'wpf-woocommerce/', WPF_WC_GATEWAY_TEMPLATE_PATH );
+		woocommerce_get_template( 'saved-cards.php', array( 'credit_cards' => $credit_cards, 'testmode' => $wpfortify->testmode ), 'wpf-woocommerce/', WPF_WC_GATEWAY_TEMPLATE_PATH );
 	}
 
 	/**
@@ -140,6 +154,9 @@ class WPF_WC_Gateway {
 				if ( is_wp_error( $result ) ) {
 					$order->add_order_note( __( 'Unable to capture charge!', 'wpf-woocommerce' ) . ' ' . $result->get_error_message() );
 				} else {
+					if ( $wpfortify->testmode ){
+						$order->add_order_note( __( 'IN TEST MODE', 'wpf-woocommerce' ) );
+					}
 					$order->add_order_note( sprintf( __( 'wpFortify (Stripe) charge captured. Charge ID: %s', 'wpf-woocommerce' ), $result->id ) );
 					update_post_meta( $order->id, '_wpf_woocommerce_charge_captured', 'yes' );
 				}

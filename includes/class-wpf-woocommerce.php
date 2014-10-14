@@ -186,13 +186,18 @@ class WPF_WC extends WC_Payment_Gateway {
      * Payment form on checkout page
      */
 	public function payment_fields() {
+		if ( $this->testmode ) {
+			$credit_cards = get_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details_test', false );
+		}else{
+			$credit_cards = get_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details_live', false );
+		}
 		?>
 		<fieldset>
 			<?php if ( $this->description ) : ?>
 				<p><?php echo esc_html( $this->description ); ?></p>
 			<?php endif; ?>
 
-			<?php if ( is_user_logged_in() && ( $credit_cards = get_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details', false ) ) ) :
+			<?php if ( is_user_logged_in() && $credit_cards ) :
 				?>
 				<p class="form-row form-row-wide">
 
@@ -225,12 +230,20 @@ class WPF_WC extends WC_Payment_Gateway {
      */
 	public function process_payment( $order_id ) {
 		$order = new WC_Order( $order_id );
-		$customer_id = get_user_meta( get_current_user_id(), '_wpf_woocommerce_customer_id', true );
+		if ( $this->testmode ) {
+			$customer_id = get_user_meta( get_current_user_id(), '_wpf_woocommerce_customer_id_test', true );
+		}else{
+			$customer_id = get_user_meta( get_current_user_id(), '_wpf_woocommerce_customer_id_live', true );
+		}
+
 		$card_id = null;
 
 		if ( isset( $_POST['wpfortify_card'] ) && $_POST['wpfortify_card'] !== 'new' && is_user_logged_in() ) {
-			$card_ids = get_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details', false );
-
+			if ( $this->testmode ) {
+				$card_ids = get_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details_test', false );
+			}else {
+				$card_ids = get_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details_live', false );
+			}
 			if ( isset( $card_ids[ $_POST['wpfortify_card'] ]['card_id'] ) ) {
 				$card_id = $card_ids[ $_POST['wpfortify_card'] ]['card_id'];
 			} else {
@@ -326,7 +339,9 @@ class WPF_WC extends WC_Payment_Gateway {
 					$url = 'https://checkout.wpfortify.com/';
 				}
 				$check_out = sprintf( '%s/token/%s/', untrailingslashit( $url ), $response->token );
-
+				if ( $this->testmode ){
+					$order->add_order_note( __( 'IN TEST MODE', 'wpf-woocommerce' ) );
+				}
 				// Redirect to wpFortify
 				return array( 'result' => 'success', 'redirect' => $check_out );
 
@@ -367,19 +382,31 @@ class WPF_WC extends WC_Payment_Gateway {
 		$order = new WC_Order( $response->metadata->order_id );
 
 		if ( $response->metadata->user_id && $response->card->customer ) {
-			add_user_meta( $response->metadata->user_id, '_wpf_woocommerce_customer_id', $response->card->customer, true );
-
-			if ( $response->metadata->save_card ) {
-				add_user_meta( $response->metadata->user_id, '_wpf_woocommerce_card_details', array(
-					'card_id'        => $response->card->id,
-					'card_brand'     => $response->card->brand,
-					'card_last4'     => $response->card->last4,
-					'card_exp_month' => $response->card->exp_month,
-					'card_exp_year'  => $response->card->exp_year
-					)
-				);
+			if ( $response->livemode ){
+				add_user_meta( $response->metadata->user_id, '_wpf_woocommerce_customer_id_live', $response->card->customer, true );
+				if ( $response->metadata->save_card ) {
+					add_user_meta( $response->metadata->user_id, '_wpf_woocommerce_card_details_live', array(
+							'card_id'        => $response->card->id,
+							'card_brand'     => $response->card->brand,
+							'card_last4'     => $response->card->last4,
+							'card_exp_month' => $response->card->exp_month,
+							'card_exp_year'  => $response->card->exp_year
+						)
+					);
+				}
+			}else{
+				add_user_meta( $response->metadata->user_id, '_wpf_woocommerce_customer_id_test', $response->card->customer, true );
+				if ( $response->metadata->save_card ) {
+					add_user_meta( $response->metadata->user_id, '_wpf_woocommerce_card_details_test', array(
+							'card_id'        => $response->card->id,
+							'card_brand'     => $response->card->brand,
+							'card_last4'     => $response->card->last4,
+							'card_exp_month' => $response->card->exp_month,
+							'card_exp_year'  => $response->card->exp_year
+						)
+					);
+				}
 			}
-
 		}
 
 		update_post_meta( $order->id, '_wpf_woocommerce_card_id',     $response->card->id );

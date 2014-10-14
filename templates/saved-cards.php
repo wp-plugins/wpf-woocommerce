@@ -4,7 +4,7 @@
 		<tr>
 			<th><?php _e( 'Card', 'wpf-woocommerce' ); ?></th>
 			<th><?php _e( 'Expires', 'wpf-woocommerce' ); ?></th>
-			<th></th>
+			<th><?php if( $testmode ){ _e( '(TEST MODE)', 'wpf-woocommerce' ); } ?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -16,6 +16,7 @@
                 <form action="" method="POST">
                     <?php wp_nonce_field ( '_wpf_woocommerce_del_card' ); ?>
                     <input type="hidden" name="wpf_woocommerce_delete_card" value="<?php echo esc_attr( $i ); ?>">
+	                <input type="hidden" name="testmode" value="<?php echo esc_attr( $testmode ); ?>">
                     <input type="submit" class="button" value="<?php _e( 'Delete card', 'wpf-woocommerce' ); ?>">
                 </form>
 			</td>
