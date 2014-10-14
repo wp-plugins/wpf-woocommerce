@@ -79,7 +79,7 @@ Sorry we currently don't support WooCommerce subscriptions, but it's on the shor
 == Changelog ==
 
 = 0.2.2 =
-* Fix: Corrected customer_id error when moving between test nad live mode.
+* Fix: Corrected customer_id error when moving between test and live mode.
 * Feature: Added "IN TEST MODE" to order notes when making test purchase.
 
 = 0.2.1 =
