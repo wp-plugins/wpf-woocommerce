@@ -3,7 +3,7 @@
 Plugin Name: wpFortify for WooCommerce
 Plugin URI: http://wordpress.org/plugins/wpf-woocommerce/
 Description: wpFortify provides a hosted SSL checkout page for Stripe payments. A free wpFortify account is required for this plugin to work.
-Version: 0.2.1
+Version: 0.2.2
 Author: wpFortify
 Author URI: https://wpfortify.com
 
@@ -27,7 +27,7 @@ class WPF_WC_Gateway {
 	 * Constructor
 	 */
 	public function __construct() {
-		define( 'WPF_WC_GATEWAY_VERSION', '0.2.1' );
+		define( 'WPF_WC_GATEWAY_VERSION', '0.2.2' );
 		define( 'WPF_WC_GATEWAY_TEMPLATE_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) . '/templates/' );
 		define( 'WPF_WC_GATEWAY_PLUGIN_URL', untrailingslashit( plugins_url( basename( plugin_dir_path( __FILE__ ) ), basename( __FILE__ ) ) ) );
 		define( 'WPF_WC_GATEWAY_MAIN_FILE', __FILE__ );
@@ -85,7 +85,11 @@ class WPF_WC_Gateway {
 			return;
 		}
 
-		$credit_cards = get_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details', false );
+		if ( $_POST['testmode'] ) {
+			$credit_cards = get_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details_test', false );
+		}else{
+			$credit_cards = get_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details_live', false );
+		}
 
 		if ( ! $credit_cards ) {
 			return;
@@ -95,7 +99,12 @@ class WPF_WC_Gateway {
 			wp_die( __( 'Unable to verify deletion, please try again', 'wpf-woocommerce' ) );
 		}
 
-		delete_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details', $credit_cards[ absint( $_POST['wpf_woocommerce_delete_card'] ) ] );
+		if ( $_POST['testmode'] ) {
+			delete_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details_test', $credit_cards[ absint( $_POST['wpf_woocommerce_delete_card'] ) ] );
+		}else{
+			delete_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details_live', $credit_cards[ absint( $_POST['wpf_woocommerce_delete_card'] ) ] );
+		}
+
 		wc_add_notice( __( 'Card deleted.', 'wpf-woocommerce' ), 'success' );
 		wp_safe_redirect( get_permalink( woocommerce_get_page_id( 'myaccount' ) ) );
 		exit;
@@ -105,13 +114,18 @@ class WPF_WC_Gateway {
 	 * Display saved cards
 	 */
 	public function saved_cards() {
-		$credit_cards = get_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details', false );
+		$wpfortify = new WPF_WC();
+		if ( $wpfortify->testmode ) {
+			$credit_cards = get_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details_test', false );
+		}else{
+			$credit_cards = get_user_meta( get_current_user_id(), '_wpf_woocommerce_card_details_live', false );
+		}
 
 		if ( ! $credit_cards ) {
 			return;
 		}
 
-		woocommerce_get_template( 'saved-cards.php', array( 'credit_cards' => $credit_cards ), 'wpf-woocommerce/', WPF_WC_GATEWAY_TEMPLATE_PATH );
+		woocommerce_get_template( 'saved-cards.php', array( 'credit_cards' => $credit_cards, 'testmode' => $wpfortify->testmode ), 'wpf-woocommerce/', WPF_WC_GATEWAY_TEMPLATE_PATH );
 	}
 
 	/**
