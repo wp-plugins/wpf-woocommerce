@@ -4,7 +4,7 @@ Tags: stripe, payment, payments, credit cards, online payment, woo, woocommerce
 Donate link: https://wpfortify.com
 Requires at least: 3.9
 Tested up to: 4.0
-Stable tag: 0.2.1
+Stable tag: 0.2.2
 License: GPLv2+
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,6 +78,9 @@ Sorry we currently don't support WooCommerce subscriptions, but it's on the shor
 
 == Changelog ==
 
+= 0.2.2 =
+* Fix: Corrected customer_id error when moving between test nad live mode
+
 = 0.2.1 =
 * Feature: Added permalink nag
 * Changed to GPLv2+.
@@ -98,4 +101,4 @@ Sorry we currently don't support WooCommerce subscriptions, but it's on the shor
 
 == Upgrade Notice ==
 
-= 0.2.1 =
+= 0.2.2 =
