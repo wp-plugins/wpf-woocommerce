@@ -295,7 +295,8 @@ class WPF_WC extends WC_Payment_Gateway {
 				'capture'         => $this->capture,
 				'metadata'        => array(
 					'order_id'    => $order_id,
-					'user_id'     => $order->user_id
+					'user_id'     => $order->user_id,
+					'name'        => $order->billing_first_name . ' ' . $order->billing_last_name,
 				)
 			)
 		);
