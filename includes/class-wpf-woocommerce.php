@@ -285,6 +285,7 @@ class WPF_WC extends WC_Payment_Gateway {
 				'image_url'       => $this->checkout_image,
 				'customer_id'     => $customer_id,
 				'card_id'         => $card_id,
+				'name'            => $order->billing_first_name . ' ' . $order->billing_last_name,
 				'email'           => $order->billing_email,
 				'amount'          => $order->order_total,
 				'description'     => $description,
