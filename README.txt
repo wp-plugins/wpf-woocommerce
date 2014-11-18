@@ -4,7 +4,7 @@ Tags: stripe, payment, payments, credit cards, online payment, woo, woocommerce
 Donate link: https://wpfortify.com
 Requires at least: 3.9
 Tested up to: 4.0
-Stable tag: 2.3
+Stable tag: 2.4
 License: GPLv2+
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,9 @@ Sorry we currently don't support WooCommerce subscriptions, but it's on the shor
 3. wpFortify default checkout page
 
 == Changelog ==
+
+= 2.4 =
+* Moved name to token metadata.
 
 = 2.3 =
 * Added name to token for Stripe.

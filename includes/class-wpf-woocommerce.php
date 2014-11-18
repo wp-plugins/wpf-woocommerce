@@ -285,7 +285,6 @@ class WPF_WC extends WC_Payment_Gateway {
 				'image_url'       => $this->checkout_image,
 				'customer_id'     => $customer_id,
 				'card_id'         => $card_id,
-				'name'            => $order->billing_first_name . ' ' . $order->billing_last_name,
 				'email'           => $order->billing_email,
 				'amount'          => $order->order_total,
 				'description'     => $description,
@@ -296,7 +295,8 @@ class WPF_WC extends WC_Payment_Gateway {
 				'capture'         => $this->capture,
 				'metadata'        => array(
 					'order_id'    => $order_id,
-					'user_id'     => $order->user_id
+					'user_id'     => $order->user_id,
+					'name'        => $order->billing_first_name . ' ' . $order->billing_last_name,
 				)
 			)
 		);
