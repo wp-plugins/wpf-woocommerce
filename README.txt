@@ -3,7 +3,7 @@ Contributors: rossdev
 Tags: stripe, payment, payments, credit cards, online payment, woo, woocommerce
 Donate link: https://wpfortify.com
 Requires at least: 3.9
-Tested up to: 4.0
+Tested up to: 4.1
 Stable tag: 2.4
 License: GPLv2+
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
