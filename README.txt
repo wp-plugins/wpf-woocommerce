@@ -4,7 +4,7 @@ Tags: stripe, payment, payments, credit cards, online payment, woo, woocommerce
 Donate link: https://wpfortify.com
 Requires at least: 3.9
 Tested up to: 4.1
-Stable tag: 2.4
+Stable tag: 2.5.0
 License: GPLv2+
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,6 +78,13 @@ Sorry we currently don't support WooCommerce subscriptions, but it's on the shor
 
 == Changelog ==
 
+= 2.5.0 =
+* Feature: wpFortify checkout now uses the WooCommerce currency options.
+* Feature: Option to pass billing information to wpFortify checkout.
+* Fix: Warning during API callback in unmask function.
+* Stopped using WooCommerce API for callbacks thus removing the need for permalinks.
+* Changed version numbering format (again).
+
 = 2.4 =
 * Moved name to token metadata.
 
@@ -109,4 +116,4 @@ Sorry we currently don't support WooCommerce subscriptions, but it's on the shor
 
 == Upgrade Notice ==
 
-= 2.3 =
+= 2.5.0 =

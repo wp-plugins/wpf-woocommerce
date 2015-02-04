@@ -3,12 +3,12 @@
 Plugin Name: wpFortify for WooCommerce
 Plugin URI: http://wordpress.org/plugins/wpf-woocommerce/
 Description: wpFortify provides a hosted SSL checkout page for Stripe payments. A free wpFortify account is required for this plugin to work.
-Version: 2.4
+Version: 2.5.0
 Author: wpFortify
 Author URI: https://wpfortify.com
 
 	Adapted from WooCommerce Stripe Gateway by Mike Jolley.
-	Copyright: © 2009-2014 WooThemes.
+	Copyright: © 2009-2015 WooThemes.
 	License: GPLv2+
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,7 +27,7 @@ class WPF_WC_Gateway {
 	 * Constructor
 	 */
 	public function __construct() {
-		define( 'WPF_WC_GATEWAY_VERSION', '2.4' );
+		define( 'WPF_WC_GATEWAY_VERSION', '2.5.0' );
 		define( 'WPF_WC_GATEWAY_TEMPLATE_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) . '/templates/' );
 		define( 'WPF_WC_GATEWAY_PLUGIN_URL', untrailingslashit( plugins_url( basename( plugin_dir_path( __FILE__ ) ), basename( __FILE__ ) ) ) );
 		define( 'WPF_WC_GATEWAY_MAIN_FILE', __FILE__ );
@@ -35,6 +35,7 @@ class WPF_WC_Gateway {
 		// Actions
 		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'plugin_action_links' ) );
 		add_action( 'plugins_loaded', array( $this, 'init' ), 0 );
+		add_action( 'init', array( $this, 'wpf_callback' ) );
 		add_filter( 'woocommerce_payment_gateways', array( $this, 'register_gateway' ) );
 		add_action( 'wp', array( $this, 'delete_card_handler' ) );
 		add_action( 'woocommerce_after_my_account', array( $this, 'saved_cards' ) );
@@ -42,6 +43,7 @@ class WPF_WC_Gateway {
 		add_action( 'woocommerce_order_status_on-hold_to_completed', array( $this, 'capture_payment' ) );
 		add_action( 'woocommerce_order_status_on-hold_to_cancelled', array( $this, 'cancel_payment' ) );
 		add_action( 'woocommerce_order_status_on-hold_to_refunded', array( $this, 'cancel_payment' ) );
+
 	}
 
 	/**
@@ -67,6 +69,7 @@ class WPF_WC_Gateway {
 
 		// Localisation
 		load_plugin_textdomain( 'wpf-woocommerce', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+
 	}
 
 	/**
@@ -106,8 +109,16 @@ class WPF_WC_Gateway {
 		}
 
 		wc_add_notice( __( 'Card deleted.', 'wpf-woocommerce' ), 'success' );
-		wp_safe_redirect( get_permalink( woocommerce_get_page_id( 'myaccount' ) ) );
+		wp_safe_redirect( get_permalink( wc_get_page_id( 'myaccount' ) ) );
 		exit;
+	}
+
+	/**
+	 * Callback
+	 */
+	public function wpf_callback() {
+		$wpfortify = new WPF_WC();
+		return $wpfortify->wpf_listen();
 	}
 
 	/**
@@ -125,7 +136,7 @@ class WPF_WC_Gateway {
 			return;
 		}
 
-		woocommerce_get_template( 'saved-cards.php', array( 'credit_cards' => $credit_cards, 'testmode' => $wpfortify->testmode ), 'wpf-woocommerce/', WPF_WC_GATEWAY_TEMPLATE_PATH );
+		wc_get_template( 'saved-cards.php', array( 'credit_cards' => $credit_cards, 'testmode' => $wpfortify->testmode ), 'wpf-woocommerce/', WPF_WC_GATEWAY_TEMPLATE_PATH );
 	}
 
 	/**
