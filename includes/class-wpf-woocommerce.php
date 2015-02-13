@@ -297,9 +297,9 @@ class WPF_WC extends WC_Payment_Gateway {
 				'metadata'        => array(
 					'order_id'        => $order_id,
 					'user_id'         => $order->user_id,
-					'name'            => $order->billing_first_name . ' ' . $order->billing_last_name,
-					'address_line1'   => $order->billing_address_1,
-					'address_line2'   => $order->billing_address_2,
+					'name'            => esc_attr( $order->billing_first_name . ' ' . $order->billing_last_name ),
+					'address_line1'   => esc_attr( $order->billing_address_1 ),
+					'address_line2'   => esc_attr( $order->billing_address_2 ),
 					'address_city'    => $order->billing_city,
 					'address_state'   => $order->billing_state,
 					'address_zip'     => $order->billing_postcode,
