@@ -78,6 +78,9 @@ Sorry we currently don't support WooCommerce subscriptions, but it's on the shor
 
 == Changelog ==
 
+= 2.5.2 =
+* Fixed update error for missing WPF_WC.
+
 = 2.5.1 =
 * Fixed double quote error during checkout.
 

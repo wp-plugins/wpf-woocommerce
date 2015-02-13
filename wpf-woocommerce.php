@@ -3,7 +3,7 @@
 Plugin Name: wpFortify for WooCommerce
 Plugin URI: http://wordpress.org/plugins/wpf-woocommerce/
 Description: wpFortify provides a hosted SSL checkout page for Stripe payments. A free wpFortify account is required for this plugin to work.
-Version: 2.5.1
+Version: 2.5.2
 Author: wpFortify
 Author URI: https://wpfortify.com
 
@@ -27,7 +27,7 @@ class WPF_WC_Gateway {
 	 * Constructor
 	 */
 	public function __construct() {
-		define( 'WPF_WC_GATEWAY_VERSION', '2.5.1' );
+		define( 'WPF_WC_GATEWAY_VERSION', '2.5.2' );
 		define( 'WPF_WC_GATEWAY_TEMPLATE_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) . '/templates/' );
 		define( 'WPF_WC_GATEWAY_PLUGIN_URL', untrailingslashit( plugins_url( basename( plugin_dir_path( __FILE__ ) ), basename( __FILE__ ) ) ) );
 		define( 'WPF_WC_GATEWAY_MAIN_FILE', __FILE__ );
@@ -117,8 +117,10 @@ class WPF_WC_Gateway {
 	 * Callback
 	 */
 	public function wpf_callback() {
-		$wpfortify = new WPF_WC();
-		return $wpfortify->wpf_listen();
+		if ( class_exists('WPF_WC') ) {
+			$wpfortify = new WPF_WC();
+			return $wpfortify->wpf_listen();
+		}
 	}
 
 	/**
