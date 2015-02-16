@@ -4,7 +4,7 @@ Tags: stripe, payment, payments, credit cards, online payment, woo, woocommerce
 Donate link: https://wpfortify.com
 Requires at least: 3.9
 Tested up to: 4.1
-Stable tag: 2.5.1
+Stable tag: 2.6.0
 License: GPLv2+
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,10 @@ Sorry we currently don't support WooCommerce subscriptions, but it's on the shor
 3. wpFortify default checkout page
 
 == Changelog ==
+
+= 2.6.0 =
+* Feature: Added option to update placeholder text on the wpFortify checkout page.
+* Updated to new WooCommerce settings features and improved layout.
 
 = 2.5.2 =
 * Fixed update error for missing WPF_WC.

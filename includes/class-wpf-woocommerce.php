@@ -29,21 +29,34 @@ class WPF_WC extends WC_Payment_Gateway {
 		$this->init_settings();
 
 		// Get setting values
-		$this->title               = $this->get_option( 'title' );
-		$this->description         = $this->get_option( 'description' ); $this->settings['description'];
-		$this->enabled             = $this->get_option( 'enabled' ); $this->settings['enabled'];
-		$this->testmode            = $this->get_option( 'testmode' ) === "yes" ? true : false;
-		$this->capture             = $this->get_option( 'capture' ) === "yes" ? true : false;
-		$this->billing             = $this->get_option( 'billing' ) === "yes" ? true : false;
-		$this->secret_key          = $this->get_option( 'secret_key' );
-		$this->public_key          = $this->get_option( 'public_key' );
-		$this->custom_checkout     = $this->get_option( 'custom_checkout' );
-		$this->checkout_image      = $this->get_option( 'checkout_image' );
-		$this->custom_title        = $this->get_option( 'custom_title' );
-		$this->custom_description  = $this->get_option( 'custom_description' );
-		$this->custom_save_card    = $this->get_option( 'custom_save_card' );
-		$this->custom_button       = $this->get_option( 'custom_button' );
-		$this->order_button_text   = __( 'Enter payment details', 'wpf-woocommerce' );
+		$this->title                 = $this->get_option( 'title' );
+		$this->description           = $this->get_option( 'description' ); $this->settings['description'];
+		$this->enabled               = $this->get_option( 'enabled' ); $this->settings['enabled'];
+		$this->testmode              = $this->get_option( 'testmode' ) === "yes" ? true : false;
+		$this->capture               = $this->get_option( 'capture' ) === "yes" ? true : false;
+		$this->billing               = $this->get_option( 'billing' ) === "yes" ? true : false;
+		$this->secret_key            = $this->get_option( 'secret_key' );
+		$this->public_key            = $this->get_option( 'public_key' );
+		$this->custom_checkout       = $this->get_option( 'custom_checkout' );
+		$this->checkout_image        = $this->get_option( 'checkout_image' );
+		$this->custom_title          = $this->get_option( 'custom_title' );
+		$this->custom_description    = $this->get_option( 'custom_description' );
+		$this->custom_save_card      = $this->get_option( 'custom_save_card' );
+		$this->custom_button         = $this->get_option( 'custom_button' );
+		$this->order_button_text     = __( 'Enter payment details', 'wpf-woocommerce' );
+		$this->placeholder_name      = $this->get_option( 'placeholder_name' );
+		$this->placeholder_address_1 = $this->get_option( 'placeholder_address_1' );
+		$this->placeholder_address_2 = $this->get_option( 'placeholder_address_2' );
+		$this->placeholder_city      = $this->get_option( 'placeholder_city' );
+		$this->placeholder_state     = $this->get_option( 'placeholder_state' );
+		$this->placeholder_zip       = $this->get_option( 'placeholder_zip' );
+		$this->placeholder_card      = $this->get_option( 'placeholder_card' );
+		$this->placeholder_cvc       = $this->get_option( 'placeholder_cvc' );
+		$this->custom_order_button   = $this->get_option( 'custom_order_button' );
+
+		if ( $this->custom_order_button ) {
+			$this->order_button_text = $this->custom_order_button;
+		}
 
 		// Hooks
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
@@ -88,8 +101,8 @@ class WPF_WC extends WC_Payment_Gateway {
 	/**
      * Initialise Gateway Settings Form Fields
      */
-    public function init_form_fields() {
-    	$this->form_fields = apply_filters( 'WPF_WC_GATEWAY_settings', array(
+	public function init_form_fields() {
+		$this->form_fields = array(
 			'enabled' => array(
 				'title'       => __( 'Enable/Disable', 'wpf-woocommerce' ),
 				'label'       => __( 'Enable wpFortify', 'wpf-woocommerce' ),
@@ -97,89 +110,182 @@ class WPF_WC extends WC_Payment_Gateway {
 				'description' => '',
 				'default'     => 'no'
 			),
+			'access_keys' => array(
+				'title'       => __( '<hr><br>Access Keys', 'wpf-woocommerce' ),
+				'type'        => 'title',
+				'description' => sprintf( __( 'Enter the access keys from your wpFortify account. <a href="%s" target="_blank">wpFortify Dashboard</a>.', 'wpf-woocommerce' ), 'https://wpfortify.com/welcome/' ),
+			),
 			'secret_key' => array(
 				'title'       => __( 'Secret Key', 'wpf-woocommerce' ),
 				'type'        => 'text',
-				'description' => __( 'Enter the access keys from your wpFortify account.', 'wpf-woocommerce' ),
+				'description' => '',
 				'default'     => ''
 			),
 			'public_key' => array(
 				'title'       => __( 'Public Key', 'wpf-woocommerce' ),
 				'type'        => 'text',
-				'description' => __( 'Enter the access keys from your wpFortify account.', 'wpf-woocommerce' ),
+				'description' => '',
 				'default'     => ''
 			),
-			'title' => array(
-				'title'       => __( 'Title', 'wpf-woocommerce' ),
-				'type'        => 'text',
-				'description' => __( 'This controls the title which the user sees during checkout.', 'wpf-woocommerce' ),
-				'default'     => __( 'Credit card', 'wpf-woocommerce' )
-			),
-			'description' => array(
-				'title'       => __( 'Description', 'wpf-woocommerce' ),
-				'type'        => 'textarea',
-				'description' => __( 'This controls the description which the user sees during checkout.', 'wpf-woocommerce' ),
-				'default'     => __( 'Pay with your credit card.', 'wpf-woocommerce')
+			'gateway_options' => array(
+				'title'       => __( '<hr><br>Gateway Options', 'wpf-woocommerce' ),
+				'type'        => 'title',
+				'description' => '',
 			),
 			'testmode' => array(
 				'title'       => __( 'Test mode', 'wpf-woocommerce' ),
 				'label'       => __( 'Enable Test Mode', 'wpf-woocommerce' ),
 				'type'        => 'checkbox',
 				'description' => __( 'Place the payment gateway in test mode.', 'wpf-woocommerce' ),
-				'default'     => 'yes'
+				'default'     => 'yes',
+				'desc_tip'    => true,
 			),
 			'capture' => array(
 				'title'       => __( 'Capture', 'wpf-woocommerce' ),
 				'label'       => __( 'Capture charge immediately', 'wpf-woocommerce' ),
 				'type'        => 'checkbox',
 				'description' => __( 'Whether or not to immediately capture the charge. When unchecked, the charge issues an authorization and will need to be captured later. Uncaptured charges expire in 7 days.', 'wpf-woocommerce' ),
-				'default'     => 'yes'
+				'default'     => 'yes',
+				'desc_tip'    => true,
 			),
 			'billing'            => array(
 				'title'       => __( 'Billing', 'wpf-woocommerce' ),
 				'label'       => __( 'Require billing information', 'wpf-woocommerce' ),
 				'type'        => 'checkbox',
-				'description' => __( 'Optional: Require customers to include billing information when entering a card during the wpFortify checkout', 'wpf-woocommerce' ),
-				'default'     => 'no'
+				'description' => __( 'Require customers to include billing information when entering a card during the wpFortify checkout', 'wpf-woocommerce' ),
+				'default'     => 'no',
+				'desc_tip'    => true,
 			),
 			'custom_checkout' => array(
-				'title'       => __( 'Custom Checkout', 'wpf-woocommerce' ),
-				'description' => __( 'Optional: Enter the URL to your custom checkout page. Example: <code>https://example.wpfortify.com/</code>', 'wpf-woocommerce' ),
+				'title'       => __( 'Custom Checkout URL', 'wpf-woocommerce' ),
+				'description' => sprintf( __( 'Optional: Enter the URL to your custom wpFortify checkout page. <a href="%s" target="_blank">More about custom URLs.</a>', 'wpf-woocommerce' ), 'http://help.wpfortify.com/custom-checkout-page-url/' ),
 				'type'        => 'text',
-				'default'     => ''
+				'default'     => '',
+				'placeholder' => 'https://example.wpfortify.com/'
+			),
+			'woo_checkout_page' => array(
+				'title'       => __( '<hr><br>WooCommerce Checkout Page', 'wpf-woocommerce' ),
+				'description' => sprintf( __( 'These fields control what your customer see\'s on the WooCommerce checkout page. Visit our <a href="%s" target="_blank">help document</a> to learn more.', 'wpf-woocommerce' ), 'http://help.wpfortify.com/change-the-default-text-on-the-woocommerce-checkout-page/' ),
+				'type'        => 'title',
+			),
+			'title' => array(
+				'title'       => __( 'Title (1)', 'wpf-woocommerce' ),
+				'description' => '',
+				'type'        => 'text',
+				'default'     => __( 'Credit card', 'wpf-woocommerce' ),
+			),
+			'description' => array(
+				'title'       => __( 'Description (2)', 'wpf-woocommerce' ),
+				'description' => '',
+				'type'        => 'text',
+				'default'     => __( 'Pay with your credit card.', 'wpf-woocommerce'),
+			),
+			'custom_order_button' => array(
+				'title'       => __( 'Checkout Button (3)', 'wpf-woocommerce' ),
+				'description' => '',
+				'type'        => 'text',
+				'default'     => __( 'Enter payment details', 'wpf-woocommerce' ),
+				'placeholder' => 'Enter payment details'
+			),
+			'wpf_checkout_page' => array(
+				'title'       => __( '<hr><br>wpFortify Checkout Page', 'wpf-woocommerce' ),
+				'description' => sprintf( __( 'These fields are optional, and control what your customer see\'s on the wpFortify checkout page. Visit our <a href="%s" target="_blank">help document</a> to learn more.', 'wpf-woocommerce' ), 'http://help.wpfortify.com/change-the-checkout-page/' ),
+				'type'        => 'title',
 			),
 			'checkout_image' => array(
-				'title'       => __( 'Checkout Image', 'wpf-woocommerce' ),
-				'description' => __( 'Optional: Enter the URL to the secure image from your wpFortify account. Example: <code>https://wpfortify.com/media/example.png</code>', 'wpf-woocommerce' ),
+				'title'       => __( 'Checkout Image (1)', 'wpf-woocommerce' ),
+				'description' => __( 'Enter the URL to the secure image from your wpFortify account.', 'wpf-woocommerce' ),
 				'type'        => 'text',
-				'default'     => ''
+				'default'     => '',
+				'placeholder' => __( 'https://wpfortify.com/media/example.png', 'wpf-woocommerce'),
+				'desc_tip'    => true,
 			),
 			'custom_title' => array(
-				'title'       => __( 'Checkout Title', 'wpf-woocommerce' ),
-				'description' => __( 'Optional: Enter a new title. Default is "', 'wpf-woocommerce' ) . get_bloginfo() . '".' ,
+				'title'       => __( 'Checkout Title (2)', 'wpf-woocommerce' ),
+				'description' => '',
 				'type'        => 'text',
-				'default'     => ''
+				'default'     => '',
+				'placeholder' => get_bloginfo(),
 			),
 			'custom_description' => array(
-				'title'       => __( 'Checkout Description', 'wpf-woocommerce' ),
-				'description' => sprintf( '%s (%s)%s', __( 'Optional: Enter a new description. Default is "Order #123"', 'wpf-woocommerce' ), $this->wpf_format_total( '456' ), __( '". Available filters: <code>{{order_id}} {{order_amount}}</code>. Example: <code>Order #{{order_id}} (${{order_amount}})</code>', 'wpf-woocommerce' ) ),
+				'title'       => __( 'Checkout Description (3)', 'wpf-woocommerce' ),
+				'description' => sprintf( __( 'Available filters: <code>{{order_id}} {{order_amount}} {{formatted_total}}</code> <a href="%s" target="_blank">More about filters.</a>', 'wpf-woocommerce' ), 'http://help.wpfortify.com/filters/' ),
 				'type'        => 'text',
-				'default'     => ''
+				'default'     => '',
+				'placeholder' => sprintf( __( 'Order #123 (%s)', 'wpf-woocommerce' ), $this->wpf_format_total( '456' ) ),
+			),
+			'placeholder_name' => array(
+				'title'       => __( 'Name Field (4)', 'wpf-woocommerce' ),
+				'description' => '',
+				'type'        => 'text',
+				'default'     => '',
+				'placeholder' => 'Name on Card',
+			),
+			'placeholder_address_1' => array(
+				'title'       => __( 'Address 1 Field (5)', 'wpf-woocommerce' ),
+				'description' => '',
+				'type'        => 'text',
+				'default'     => '',
+				'placeholder' => 'Billing address',
+			),
+			'placeholder_address_2' => array(
+				'title'       => __( 'Address 2 Field (6)', 'wpf-woocommerce' ),
+				'description' => '',
+				'type'        => 'text',
+				'default'     => '',
+				'placeholder' => 'Address 2 (optional)',
+			),
+			'placeholder_city' => array(
+				'title'       => __( 'City Field (7)', 'wpf-woocommerce' ),
+				'description' => '',
+				'type'        => 'text',
+				'default'     => '',
+				'placeholder' => 'City',
+			),
+			'placeholder_state' => array(
+				'title'       => __( 'State Field (8)', 'wpf-woocommerce' ),
+				'description' => '',
+				'type'        => 'text',
+				'default'     => '',
+				'placeholder' => 'State',
+			),
+			'placeholder_zip' => array(
+				'title'       => __( 'Postal Code Field (9)', 'wpf-woocommerce' ),
+				'description' => '',
+				'type'        => 'text',
+				'default'     => '',
+				'placeholder' => 'Zip',
+			),
+			'placeholder_card' => array(
+				'title'       => __( 'Card Number Field (10)', 'wpf-woocommerce' ),
+				'description' => '',
+				'type'        => 'text',
+				'default'     => '',
+				'placeholder' => 'Card number',
+			),
+			'placeholder_cvc' => array(
+				'title'       => __( 'CVC Field (11)', 'wpf-woocommerce' ),
+				'description' => '',
+				'type'        => 'text',
+				'default'     => '',
+				'placeholder' => 'CVC',
 			),
 			'custom_save_card' => array(
-				'title'       => __( 'Checkout Save Card', 'wpf-woocommerce' ),
-				'description' => __( 'Optional: Enter new save card text. Default is "Save this card for future purchases".', 'wpf-woocommerce' ),
+				'title'       => __( 'Checkout Save Card (12)', 'wpf-woocommerce' ),
+				'description' => '',
 				'type'        => 'text',
-				'default'     => ''
+				'default'     => '',
+				'placeholder' => 'Save this card for future purchases',
 			),
 			'custom_button' => array(
-				'title'       => __( 'Checkout Button', 'wpf-woocommerce' ),
-				'description' => __( 'Optional: Enter new button text. Default is "Pay with Card". Available filters: <code>{{order_id}} {{order_amount}}</code>. Example: <code>Pay with Card (${{order_amount}})</code>', 'wpf-woocommerce' ),
+				'title'       => __( 'Checkout Button (13)', 'wpf-woocommerce' ),
+				'description' => sprintf( __( 'Available filters: <code>{{order_id}} {{order_amount}} {{formatted_total}}</code> <a href="%s" target="_blank">More about filters.</a>', 'wpf-woocommerce' ), 'http://help.wpfortify.com/filters/' ),
 				'type'        => 'text',
-				'default'     => ''
+				'default'     => '',
+				'placeholder' => 'Pay with Card',
 			)
-		) );
-    }
+		);
+	}
 
 	/**
      * Payment form on checkout page
@@ -261,40 +367,48 @@ class WPF_WC extends WC_Payment_Gateway {
 			$title = $this->custom_title;
 		}
 		if ( $this->custom_description ) {
-			$description = str_replace( array( '{{order_id}}', '{{order_amount}}' ), array( $order_id, $order->order_total ), $this->custom_description );
+			$description = str_replace( array( '{{order_id}}', '{{order_amount}}', '{{formatted_total}}' ), array( $order_id, $order->order_total, $this->wpf_format_total( $order->order_total ) ), $this->custom_description );
 		}
 		if ( $this->custom_save_card ) {
 			$save_card = $this->custom_save_card;
 		}
 		if ( $this->custom_button ) {
-			$button = str_replace( array( '{{order_id}}', '{{order_amount}}' ), array( $order_id, $order->order_total ), $this->custom_button );
+			$button = str_replace( array( '{{order_id}}', '{{order_amount}}', '{{formatted_total}}' ), array( $order_id, $order->order_total, $this->wpf_format_total( $order->order_total ) ), $this->custom_button );
 		}
 
 		// Data for wpFortify
 		$wpf_charge = array(
 			'wpf_charge' => array(
-				'plugin'          => 'wpf-woocommerce',
-				'version'         => WPF_WC_GATEWAY_VERSION,
-				'action'          => 'charge_card',
-				'site_title'      => $title,
-				'site_url'        => site_url(),
-				'listen_url'      => site_url( '/?wpf-woocommerce=callback' ),
-				'return_url'      => $this->get_return_url( $order ),
-				'cancel_url'      => get_permalink( get_option( 'woocommerce_checkout_page_id' ) ),
-				'custom_checkout' => $this->custom_checkout,
-				'image_url'       => $this->checkout_image,
-				'customer_id'     => $customer_id,
-				'card_id'         => $card_id,
-				'email'           => $order->billing_email,
-				'amount'          => $order->order_total,
-				'description'     => $description,
-				'save_card'       => $save_card,
-				'button'          => $button,
-				'currency'        => get_woocommerce_currency(),
-				'testmode'        => $this->testmode,
-				'capture'         => $this->capture,
-				'billing'         => $this->billing,
-				'metadata'        => array(
+				'plugin'                => 'wpf-woocommerce',
+				'version'               => WPF_WC_GATEWAY_VERSION,
+				'action'                => 'charge_card',
+				'site_title'            => $title,
+				'site_url'              => site_url(),
+				'listen_url'            => site_url( '/?wpf-woocommerce=callback' ),
+				'return_url'            => $this->get_return_url( $order ),
+				'cancel_url'            => get_permalink( get_option( 'woocommerce_checkout_page_id' ) ),
+				'custom_checkout'       => $this->custom_checkout,
+				'image_url'             => $this->checkout_image,
+				'customer_id'           => $customer_id,
+				'card_id'               => $card_id,
+				'email'                 => $order->billing_email,
+				'amount'                => $order->order_total,
+				'description'           => $description,
+				'placeholder_name'      => $this->placeholder_name,
+				'placeholder_address_1' => $this->placeholder_address_1,
+				'placeholder_address_2' => $this->placeholder_address_2,
+				'placeholder_city'      => $this->placeholder_city,
+				'placeholder_state'     => $this->placeholder_state,
+				'placeholder_zip'       => $this->placeholder_zip,
+				'placeholder_card'      => $this->placeholder_card,
+				'placeholder_cvc'       => $this->placeholder_cvc,
+				'save_card'             => $save_card,
+				'button'                => $button,
+				'currency'              => get_woocommerce_currency(),
+				'testmode'              => $this->testmode,
+				'capture'               => $this->capture,
+				'billing'               => $this->billing,
+				'metadata'              => array(
 					'order_id'        => $order_id,
 					'user_id'         => $order->user_id,
 					'name'            => esc_attr( $order->billing_first_name . ' ' . $order->billing_last_name ),
