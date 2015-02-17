@@ -51,6 +51,7 @@ class WPF_WC extends WC_Payment_Gateway {
 		$this->placeholder_state     = $this->get_option( 'placeholder_state' );
 		$this->placeholder_zip       = $this->get_option( 'placeholder_zip' );
 		$this->placeholder_card      = $this->get_option( 'placeholder_card' );
+		$this->placeholder_date      = $this->get_option( 'placeholder_date' );
 		$this->placeholder_cvc       = $this->get_option( 'placeholder_cvc' );
 		$this->custom_order_button   = $this->get_option( 'custom_order_button' );
 
@@ -263,22 +264,29 @@ class WPF_WC extends WC_Payment_Gateway {
 				'default'     => '',
 				'placeholder' => 'Card number',
 			),
+			'placeholder_date' => array(
+				'title'       => __( 'Date Field (11)', 'wpf-woocommerce' ),
+				'description' => '',
+				'type'        => 'text',
+				'default'     => '',
+				'placeholder' => 'MM / YY',
+			),
 			'placeholder_cvc' => array(
-				'title'       => __( 'CVC Field (11)', 'wpf-woocommerce' ),
+				'title'       => __( 'CVC Field (12)', 'wpf-woocommerce' ),
 				'description' => '',
 				'type'        => 'text',
 				'default'     => '',
 				'placeholder' => 'CVC',
 			),
 			'custom_save_card' => array(
-				'title'       => __( 'Checkout Save Card (12)', 'wpf-woocommerce' ),
+				'title'       => __( 'Checkout Save Card (13)', 'wpf-woocommerce' ),
 				'description' => '',
 				'type'        => 'text',
 				'default'     => '',
 				'placeholder' => 'Save this card for future purchases',
 			),
 			'custom_button' => array(
-				'title'       => __( 'Checkout Button (13)', 'wpf-woocommerce' ),
+				'title'       => __( 'Checkout Button (14)', 'wpf-woocommerce' ),
 				'description' => sprintf( __( 'Available filters: <code>{{order_id}} {{order_amount}} {{formatted_total}}</code> <a href="%s" target="_blank">More about filters.</a>', 'wpf-woocommerce' ), 'http://help.wpfortify.com/filters/' ),
 				'type'        => 'text',
 				'default'     => '',
@@ -401,6 +409,7 @@ class WPF_WC extends WC_Payment_Gateway {
 				'placeholder_state'     => $this->placeholder_state,
 				'placeholder_zip'       => $this->placeholder_zip,
 				'placeholder_card'      => $this->placeholder_card,
+				'placeholder_date'      => $this->placeholder_date,
 				'placeholder_cvc'       => $this->placeholder_cvc,
 				'save_card'             => $save_card,
 				'button'                => $button,
