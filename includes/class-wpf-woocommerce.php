@@ -360,7 +360,7 @@ class WPF_WC extends WC_Payment_Gateway {
 			if ( isset( $card_ids[ $_POST['wpfortify_card'] ]['card_id'] ) ) {
 				$card_id = $card_ids[ $_POST['wpfortify_card'] ]['card_id'];
 			} else {
-				WC()->wc_add_notice( __( 'Invalid card.', 'wpf-woocommerce' ), 'error' );
+				wc_add_notice( __( 'Invalid card.', 'wpf-woocommerce' ), 'error' );
 				return;
 			}
 
@@ -435,7 +435,7 @@ class WPF_WC extends WC_Payment_Gateway {
 			$response = $this->wpf_api( 'repeater', $wpf_charge );
 
 			if ( is_wp_error( $response ) ) {
-				WC()->wc_add_notice( $response->get_error_message(), 'error' );
+				wc_add_notice( $response->get_error_message(), 'error' );
 				return;
 			}
 
@@ -450,7 +450,7 @@ class WPF_WC extends WC_Payment_Gateway {
 					'redirect' => $this->get_return_url( $order )
 				);
 			} else {
-				WC()->wc_add_notice( __( 'There was a problem updating the order.', 'wpf-woocommerce' ), 'error' );
+				wc_add_notice( __( 'There was a problem updating the order.', 'wpf-woocommerce' ), 'error' );
 				return;
 			}
 
@@ -458,7 +458,7 @@ class WPF_WC extends WC_Payment_Gateway {
 			$response = $this->wpf_api( 'token', $wpf_charge );
 
 			if ( is_wp_error( $response ) ) {
-				WC()->wc_add_notice( $response->get_error_message(), 'error' );
+				wc_add_notice( $response->get_error_message(), 'error' );
 				return;
 			}
 
@@ -585,9 +585,6 @@ class WPF_WC extends WC_Payment_Gateway {
 			if ( isset( $response ) && $response->id ) {
 				$this->wpf_update_order( $response );
 				echo $this->wpf_mask( array( 'status' => 'order_updated' ) );
-				exit;
-			} else {
-				echo $this->wpf_mask( array( 'error' => 'no order id' ) );
 				exit;
 			}
 		}

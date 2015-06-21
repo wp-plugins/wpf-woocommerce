@@ -3,8 +3,8 @@ Contributors: rossdev
 Tags: stripe, payment, payments, credit cards, online payment, woo, woocommerce
 Donate link: https://wpfortify.com
 Requires at least: 3.9
-Tested up to: 4.1
-Stable tag: 2.6.1
+Tested up to: 4.2.2
+Stable tag: 2.6.2
 License: GPLv2+
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,9 @@ Sorry we currently don't support WooCommerce subscriptions, but it's on the shor
 3. wpFortify default checkout page
 
 == Changelog ==
+
+= 2.6.2 =
+* Fixed missing function error for WC()->wc_add_notice()
 
 = 2.6.1 =
 * Added MM / YY placeholder
