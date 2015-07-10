@@ -35,7 +35,7 @@ class WPF_Helper_Actions {
 	 * Callback
 	 */
 	public function wpf_callback() {
-		if ( class_exists('WPF_WC') ) {
+		if ( class_exists( 'WPF_WC' ) ) {
 			$wpfortify = new WPF_WC();
 			return $wpfortify->wpf_listen();
 		}

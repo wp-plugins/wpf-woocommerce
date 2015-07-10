@@ -69,13 +69,17 @@ class WPF_WC extends WC_Payment_Gateway {
   	public function admin_options() {
 		?>
 		<h3><?php echo $this->method_title; ?></h3>
-
+	    <?php if ( ! extension_loaded( 'mcrypt' ) ) : ?>
+		    <div class="error">
+			    <p class="main"><strong><?php _e( 'ERROR: This plugin requires the "Mcrypt" extension for PHP. Please contact your hosting company to have it enabled on your server.', 'wpf-woocommerce' ); ?></strong></p>
+		    </div>
+	    <?php endif; ?>
 		<?php if ( empty( $this->secret_key ) || empty( $this->public_key ) ) : ?>
 			<div class="updated">
 				<p class="main"><strong><?php echo $this->method_description; ?></strong></p>
-				<p><a href="https://connect.wpfortify.com/" target="_blank" class="button button-primary"><?php _e( 'Connect now for free', 'wpf-woocommerce' ); ?></a> <a href="https://wpfortify.com/welcome/" target="_blank" class="button"><?php _e( 'Sign In', 'wpf-woocommerce' ); ?></a></p>
+				<p><a href="https://wpfortify.com/welcome/?register=yes" target="_blank" class="button button-primary"><?php _e( 'Create your free account', 'wpf-woocommerce' ); ?></a> <a href="https://wpfortify.com/wp-admin/" target="_blank" class="button"><?php _e( 'Sign In', 'wpf-woocommerce' ); ?></a></p>
 			</div>
-            <?php else : ?>
+        <?php else : ?>
 			<p><?php echo $this->method_description; ?></p>
 		<?php endif; ?>
 
@@ -92,6 +96,9 @@ class WPF_WC extends WC_Payment_Gateway {
 		if ( $this->enabled == "yes" ) {
 			// Required fields check
 			if ( ! $this->secret_key || ! $this->public_key ) {
+				return false;
+			}
+			if ( ! extension_loaded( 'mcrypt' ) ) {
 				return false;
 			}
 			return true;
@@ -587,6 +594,8 @@ class WPF_WC extends WC_Payment_Gateway {
 				echo $this->wpf_mask( array( 'status' => 'order_updated' ) );
 				exit;
 			}
+			echo $this->wpf_mask( array( 'status' => 'error' ) );
+			exit;
 		}
 	}
 

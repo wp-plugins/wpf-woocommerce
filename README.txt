@@ -4,7 +4,7 @@ Tags: stripe, payment, payments, credit cards, online payment, woo, woocommerce
 Donate link: https://wpfortify.com
 Requires at least: 3.9
 Tested up to: 4.2.2
-Stable tag: 2.6.2
+Stable tag: 2.6.3
 License: GPLv2+
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,10 @@ Sorry we currently don't support WooCommerce subscriptions, but it's on the shor
 3. wpFortify default checkout page
 
 == Changelog ==
+
+= 2.6.3 =
+* Added a PHP extension check for Mcrypt, and if it's not found the gateway will be disabled. This check is to prevent a fatal error for mcrypt_create_iv() during checkout.
+* Added back a callback response that was removed by accident on 2.6.2
 
 = 2.6.2 =
 * Fixed missing function error for WC()->wc_add_notice()
